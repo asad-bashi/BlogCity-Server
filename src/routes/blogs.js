@@ -29,7 +29,8 @@ router.post("/api/blogs", (req, res) => {
 
   const query = "insert into blogs(title,body,user_id) values(?,?,?)";
   db.query(query, [title, body, 1], (error, results) => {
-    return error ? res.send("error blog not added") : res.send(results);
+    console.log(error);
+    return error ? res.send("error blog not added") : res.send("blog added");
     // if (error) {
     //   console.log(error);
     //   res.send("Invalid Blog Combination");

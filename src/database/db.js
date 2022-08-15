@@ -8,4 +8,9 @@ const db = mysql.createPool({
   database: "blogapp",
 });
 
+//add querys here
+function findUser(email){
+  
+}
+
 module.exports = db;
