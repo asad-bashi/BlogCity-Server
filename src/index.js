@@ -2,7 +2,6 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 const passport = require("passport");
-require("./strategies/local");
 
 //Routes
 const blogsRoute = require("./routes/blogs");

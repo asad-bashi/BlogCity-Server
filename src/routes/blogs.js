@@ -12,6 +12,7 @@ join users on blogs.user_id = users.id
   });
 });
 
+//returns blog coresponding with given id
 router.get("/api/blogs/:id", (req, res) => {
   const { id } = req.params;
   const query = `select title,body,date_format(created_at,'%M %d %Y') as date ,concat(users.first_name,' ',users.last_name) as 'name' from blogs join users on blogs.user_id = users.id where blogs.id=${id}`;
@@ -29,7 +30,6 @@ router.post("/api/blogs", (req, res) => {
 
   const query = "insert into blogs(title,body,user_id) values(?,?,?)";
   db.query(query, [title, body, 1], (error, results) => {
-    console.log(error);
     return error ? res.send("error blog not added") : res.send("blog added");
     // if (error) {
     //   console.log(error);
