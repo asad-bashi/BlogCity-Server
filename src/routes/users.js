@@ -1,75 +1,64 @@
 const { Router } = require("express");
-const db = require("../database/db");
+const { getUser, getAllUsers, insertUser } = require("../database/db");
 const router = Router();
-const bcrypt = require("bcryptjs");
-const { hashPassword } = require("../utils/helpers");
+const passport = require("passport");
 
 //gets list of users
-router.get("/api/users", (req, res) => {
-  const query = `select * from users`;
-  db.query(query, (error, results) => {
-    return error ? res.send(error) : res.send(results);
-  });
+router.get("/api/users", async (req, res) => {
+  try {
+    const allUsers = await getAllUsers();
+    res.send(allUsers);
+  } catch (e) {
+    res.send(e);
+  }
 });
 
 //create user and add to database
-router.post("/api/users", (req, res) => {
+router.post("/api/users", async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
-  const hash = hashPassword(password);
-  //check if email is in db
-  //hash password
-  //add user
-
-  db.query(
-    `insert into users (first_name,last_name,email,hashed) values(?,?,?,?);`,
-    [firstName, lastName, email, hash],
-    (error, results) => {
-      return error
-        ? res.send("email already exist")
-        : res.send("account created");
-    }
-  );
+  try {
+    await insertUser(firstName, lastName, email, password);
+    res.send("account created");
+  } catch (e) {
+    res.send("email already exist");
+  }
 });
 
-router.post("/api/sign-in", (req, res) => {
-  const { email, password } = req.body;
-  //is email found in database
-  //does password match
-  //serialize user into session
+router.post(
+  "/api/login",
+  passport.authenticate("local", {
+    failureRedirect: "/api/login-failed",
+    successRedirect: "/api/login-success",
+    failureMessage: true,
+  })
+);
 
-  const query = `select * from users where email='${email}'`;
+router.get("/api/login-failed", (req, res, next) => {
+  const message = req.session.messages[req.session.messages.length - 1];
+  res.send({ message });
+});
 
-  db.query(query, email, (error, results) => {
-    if (error) {
-      res.send(error);
+router.get("/api/login-success", (req, res) => {
+  res.send({ message: "login successful" });
+});
+
+router.post("/api/logout", (req, res) => {
+  req.logout((e) => {
+    if (e) {
+      res.send(e);
     } else {
-      if (results.length) {
-        const isValid = bcrypt.compareSync(password, results[0].hashed);
-        if (isValid) {
-          res.send("you are logged in");
-        } else {
-          res.send("wrong credentials");
-        }
-      } else {
-        res.send("email not found");
-      }
+      res.send({ message: "logout successful" });
     }
   });
 });
 
-router.get("/api/users/:id", (req, res) => {
+router.get("/api/users/:id", async (req, res) => {
   const { id } = req.params;
-  const query = `select first_name,last_name,email from users where id=${id}`;
-  db.query(query, id, (error, results) => {
-    if (error) {
-      res.send(error);
-    }
-    if (results.length) {
-      res.send(results);
-    } else {
-      res.send("User doesn't exist");
-    }
-  });
+  const user = await getUser(id);
+  if (!user) {
+    return res.send("User doesn't exist");
+  }
+  return res.send(user);
 });
 
 module.exports = router;
