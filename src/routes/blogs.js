@@ -1,37 +1,44 @@
 const { Router } = require("express");
 const router = Router();
-const { db, getBlog, getBlogs } = require("../database/db");
+const { getBlog, getBlogs, insertBlog } = require("../database/db");
+const { isAuthenticated } = require("../utils/helpers");
 
 //returns all blogs
 router.get("/api/blogs", async (req, res) => {
-  const blogs = await getBlogs();
-  res.send(blogs);
+  try {
+    const blogs = await getBlogs();
+    return res.send(blogs);
+  } catch (e) {
+    return res.send(e);
+  }
 });
 
 //returns blog coresponding with given id
 router.get("/api/blogs/:id", async (req, res) => {
   const { id } = req.params;
-  const blog = await getBlog(id);
-  if (!blog) {
-    return res.send("blog not found");
+
+  try {
+    const blog = await getBlog(id);
+    if (!blog) {
+      return res.send("blog not found");
+    }
+    return res.send(blog);
+  } catch (e) {
+    return res.send(e);
   }
-  return res.send(blog);
 });
 
 //creates new blog entry and adds to database
-router.post("/api/blogs", (req, res) => {
+router.post("/api/blogs", isAuthenticated, async (req, res) => {
   const { title, body } = req.body;
+  const id = req.user.id;
 
-  const query = "insert into blogs(title,body,user_id) values(?,?,?)";
-  db.query(query, [title, body, 1], (error, results) => {
-    return error ? res.send("error blog not added") : res.send("blog added");
-    // if (error) {
-    //   console.log(error);
-    //   res.send("Invalid Blog Combination");
-    // } else {
-    //   res.send("Blog Successfully Added");
-    // }
-  });
+  try {
+    await insertBlog(title, body, id);
+    return res.send("blog added");
+  } catch (e) {
+    return res.send(e);
+  }
 });
 
 module.exports = router;

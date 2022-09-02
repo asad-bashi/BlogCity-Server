@@ -19,7 +19,8 @@ function getBlog(id) {
       if (error) {
         return reject(error);
       }
-      return resolve(results);
+
+      return resolve(results[0]);
     });
   });
 }
@@ -30,6 +31,18 @@ function getBlogs() {
     const query = `select blogs.id,title,body,date_format(created_at,'%M %d, %Y') as 'date',concat(users.first_name,' ',users.last_name) as 'name' from blogs
                    join users on blogs.user_id = users.id`;
     db.query(query, [], (error, results) => {
+      if (error) {
+        return reject(error);
+      }
+      return resolve(results);
+    });
+  });
+}
+
+function insertBlog(title, body, id) {
+  return new Promise((resolve, reject) => {
+    const query = `insert into blogs(title,body,user_id) values(?,?,?)`;
+    db.query(query, [title, body, id], (error, results) => {
       if (error) {
         return reject(error);
       }
@@ -60,7 +73,7 @@ function getUser(id) {
       if (error) {
         return reject(error);
       }
-      return resolve(results);
+      return resolve(results[0]);
     });
   });
 }
@@ -95,6 +108,7 @@ module.exports = {
   db,
   getBlog,
   getBlogs,
+  insertBlog,
   isValidEmail,
   getUser,
   getAllUsers,

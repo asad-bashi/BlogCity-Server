@@ -2,6 +2,7 @@ const { Router } = require("express");
 const { getUser, getAllUsers, insertUser } = require("../database/db");
 const router = Router();
 const passport = require("passport");
+const { isAuthenticated } = require("../utils/helpers");
 
 //gets list of users
 router.get("/api/users", async (req, res) => {
@@ -42,7 +43,8 @@ router.get("/api/login-success", (req, res) => {
   res.send({ message: "login successful" });
 });
 
-router.post("/api/logout", (req, res) => {
+//logout the user
+router.post("/api/logout", isAuthenticated, (req, res) => {
   req.logout((e) => {
     if (e) {
       res.send(e);
@@ -52,6 +54,7 @@ router.post("/api/logout", (req, res) => {
   });
 });
 
+//returns user with given id
 router.get("/api/users/:id", async (req, res) => {
   const { id } = req.params;
   const user = await getUser(id);
