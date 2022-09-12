@@ -11,10 +11,25 @@ const db = mysql.createPool({
   port: process.env.DATABASE_PORT,
 });
 
+//returns all blogs with format to make blog cards
+function getBlogs() {
+  return new Promise((resolve, reject) => {
+    const query = `select blogs.id,blogs.title,blogs.body,date_format(blogs.created_at,'%M %d %Y') as 'date',
+                   concat(users.first_name,' ',users.last_name) as 'name', tags.tag as 'tags' from blogs
+                  join users on blogs.user_id = users.id join tags on tags.blog_id = blogs.id`;
+    db.query(query, [], (error, results) => {
+      if (error) {
+        return reject(error);
+      }
+      return resolve(results);
+    });
+  });
+}
+
 //returns blog with given id
 function getBlog(id) {
   return new Promise((resolve, reject) => {
-    const query = `select blogs.id,title,body,date_format(created_at,'%M %d %Y') as date ,concat(users.first_name,' ',users.last_name) as 'name' from blogs join users on blogs.user_id = users.id where blogs.id=?`;
+    const query = `select blogs.id,users.id as 'user_id', title,body,date_format(created_at,'%M %d %Y') as date ,concat(users.first_name,' ',users.last_name) as 'name', tags.tag as 'tags' from blogs join users on blogs.user_id = users.id join tags on tags.blog_id = blogs.id where blogs.id=?`;
     db.query(query, [id], (error, results) => {
       if (error) {
         return reject(error);
@@ -25,11 +40,9 @@ function getBlog(id) {
   });
 }
 
-//returns all blogs with format to make blog cards
-function getBlogs() {
+function getBlogsByCategory(category) {
   return new Promise((resolve, reject) => {
-    const query = `select blogs.id,title,body,date_format(created_at,'%M %d, %Y') as 'date',concat(users.first_name,' ',users.last_name) as 'name' from blogs
-                   join users on blogs.user_id = users.id`;
+    const query = `select * from tags where tag like '%${category}%'`;
     db.query(query, [], (error, results) => {
       if (error) {
         return reject(error);
@@ -43,6 +56,30 @@ function insertBlog(title, body, id) {
   return new Promise((resolve, reject) => {
     const query = `insert into blogs(title,body,user_id) values(?,?,?)`;
     db.query(query, [title, body, id], (error, results) => {
+      if (error) {
+        return reject(error);
+      }
+      return resolve(results);
+    });
+  });
+}
+
+function editBlog(title, body, id) {
+  return new Promise((resolve, reject) => {
+    const query = `update blogs set title=?,body=? where id=?`;
+    db.query(query, [title, body, id], (error, results) => {
+      if (error) {
+        return reject(error);
+      }
+      return resolve(results);
+    });
+  });
+}
+
+function deleteBlog(id) {
+  return new Promise((resolve, reject) => {
+    const query = `delete from blogs where id=${id}`;
+    db.query(query, [id], (error, results) => {
       if (error) {
         return reject(error);
       }
@@ -104,6 +141,18 @@ function insertUser(fname, lname, email, password) {
   });
 }
 
+function insertTag(selectedTags, blog_id) {
+  return new Promise((resolve, reject) => {
+    const query = `insert into tags(tag,blog_id) values(?,?)`;
+    db.query(query, [selectedTags, blog_id], (error, results) => {
+      if (error) {
+        return reject(error);
+      }
+      return resolve(results);
+    });
+  });
+}
+
 module.exports = {
   db,
   getBlog,
@@ -113,4 +162,8 @@ module.exports = {
   getUser,
   getAllUsers,
   insertUser,
+  insertTag,
+  editBlog,
+  deleteBlog,
+  getBlogsByCategory,
 };

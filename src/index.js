@@ -27,9 +27,9 @@ app.use(
   session({
     secret: "LASDNFOLIUASNDFKSABDFBASDFASDF",
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true,
     store: sessionStore,
-    cookie: { maxAge: TWO_HOURS, httpOnly: true },
+    cookie: { maxAge: TWO_HOURS, httpOnly: true, sameSite: true },
   })
 );
 app.use(passport.initialize());
@@ -46,7 +46,12 @@ app.use(blogsRoute);
 app.use(usersRoute);
 
 app.get("/api/isAuth", (req, res) => {
-  res.send(req.isAuthenticated());
+  const isValid = req.isAuthenticated();
+
+  if (isValid) {
+    return res.send({ isAuthenticated: isValid, id: req.user.id });
+  }
+  return res.send({ isAuthenticated: isValid, id: false });
 });
 
 app.listen(5000, () => {

@@ -16,6 +16,7 @@ function isAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   }
+
   return res.send("must be logged in to access this route");
 }
 
