@@ -58,7 +58,7 @@ router.post("/api/blogs", isAuthenticated, async (req, res) => {
   try {
     const { insertId } = await insertBlog(title, body, id);
     await insertTag(selectedTags, insertId);
-    return res.send("blog added");
+    return res.send({ message: "blog added", id: insertId });
   } catch (e) {
     return res.send(e);
   }
@@ -84,6 +84,7 @@ router.delete("/api/blogs/:id", isAuthenticated, async (req, res) => {
   const { id } = req.params;
   try {
     await deleteBlog(id);
+    res.send("blog was deleted");
   } catch (e) {
     res.send(e);
   }

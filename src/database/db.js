@@ -9,6 +9,7 @@ const db = mysql.createPool({
   password: process.env.DATABASE_PASSWORD,
   database: process.env.DATABASE_NAME,
   port: process.env.DATABASE_PORT,
+  multipleStatements: true,
 });
 
 //returns all blogs with format to make blog cards
@@ -78,11 +79,13 @@ function editBlog(title, body, id) {
 
 function deleteBlog(id) {
   return new Promise((resolve, reject) => {
-    const query = `delete from blogs where id=${id}`;
-    db.query(query, [id], (error, results) => {
+    const query1 = `delete from tags where blog_id=${id}`;
+    const query2 = `delete from blogs where id=${id}`;
+    db.query(`${query1}; ${query2}`, [id], (error, results) => {
       if (error) {
         return reject(error);
       }
+
       return resolve(results);
     });
   });
