@@ -27,28 +27,31 @@ function getBlogs() {
   });
 }
 
+function getBlogsByCategory(category) {
+  return new Promise((resolve, reject) => {
+    const query = `select blogs.id,blogs.title,blogs.body,date_format(blogs.created_at,'%M %d %Y') as 'date',
+                   concat(users.first_name,' ',users.last_name) as 'name', tags.tag as 'tags' from blogs
+                  join users on blogs.user_id = users.id join tags on tags.blog_id = blogs.id where tags.tag like '%${category}%'`;
+    db.query(query, [], (error, results) => {
+      if (error) {
+        return reject(error);
+      }
+      return resolve(results);
+    });
+  });
+}
+
 //returns blog with given id
 function getBlog(id) {
   return new Promise((resolve, reject) => {
-    const query = `select blogs.id,users.id as 'user_id', title,body,date_format(created_at,'%M %d %Y') as date ,concat(users.first_name,' ',users.last_name) as 'name', tags.tag as 'tags' from blogs join users on blogs.user_id = users.id join tags on tags.blog_id = blogs.id where blogs.id=?`;
+    const query = `select blogs.id,users.id as 'user_id', title,body,date_format(created_at,'%M %d %Y') as date ,concat(users.first_name,' ',users.last_name) as 'name',
+     tags.tag as 'tags' from blogs join users on blogs.user_id = users.id join tags on tags.blog_id = blogs.id where blogs.id=?`;
     db.query(query, [id], (error, results) => {
       if (error) {
         return reject(error);
       }
 
       return resolve(results[0]);
-    });
-  });
-}
-
-function getBlogsByCategory(category) {
-  return new Promise((resolve, reject) => {
-    const query = `select * from tags where tag like '%${category}%'`;
-    db.query(query, [], (error, results) => {
-      if (error) {
-        return reject(error);
-      }
-      return resolve(results);
     });
   });
 }

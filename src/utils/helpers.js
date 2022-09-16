@@ -17,7 +17,7 @@ function isAuthenticated(req, res, next) {
     return next();
   }
 
-  return res.send("must be logged in to access this route");
+  return res.send({ message: "must be logged in to access this route" });
 }
 
 module.exports = {

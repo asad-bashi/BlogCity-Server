@@ -5,6 +5,7 @@ const passport = require("passport");
 const session = require("express-session");
 const mysqlStore = require("express-mysql-session")(session);
 const dotenv = require("dotenv");
+const fileUpload = require("express-fileupload");
 require("./utils/local");
 dotenv.config();
 const TWO_HOURS = 1000 * 60 * 60 * 2;
@@ -41,11 +42,12 @@ const corsConfig = {
 };
 app.use(cors(corsConfig));
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ limit: "30mb", extended: true }));
 app.use(blogsRoute);
 app.use(usersRoute);
 
 app.get("/api/isAuth", (req, res) => {
+  
   const isValid = req.isAuthenticated();
 
   if (isValid) {
