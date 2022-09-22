@@ -1,4 +1,6 @@
 const bcrypt = require("bcryptjs");
+const multer = require("multer");
+const upload = multer();
 
 //returns hashed version of given password
 function hashPassword(password) {

@@ -5,7 +5,6 @@ const passport = require("passport");
 const session = require("express-session");
 const mysqlStore = require("express-mysql-session")(session);
 const dotenv = require("dotenv");
-const fileUpload = require("express-fileupload");
 require("./utils/local");
 dotenv.config();
 const TWO_HOURS = 1000 * 60 * 60 * 2;
@@ -40,6 +39,20 @@ const corsConfig = {
   origin: true,
   credentials: true,
 };
+
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", req.get("Origin") || "*");
+  // res.header("Access-Control-Allow-Credentials", "true");
+  // res.header("Access-Control-Allow-Methods", "GET,HEAD,PUT,PATCH,POST,DELETE");
+  // res.header("Access-Control-Expose-Headers", "Content-Length");
+  // res.header(
+  //   "Access-Control-Allow-Headers",
+  //   "Accept, Authorization, Content-Type, X-Requested-With, Range"
+  // );
+  next();
+});
+app.use(express.static(__dirname));
+app.use("/Images", express.static("Images"));
 app.use(cors(corsConfig));
 app.use(express.json());
 app.use(express.urlencoded({ limit: "30mb", extended: true }));
@@ -47,7 +60,6 @@ app.use(blogsRoute);
 app.use(usersRoute);
 
 app.get("/api/isAuth", (req, res) => {
-  
   const isValid = req.isAuthenticated();
 
   if (isValid) {

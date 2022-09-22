@@ -16,7 +16,7 @@ const db = mysql.createPool({
 function getBlogs() {
   return new Promise((resolve, reject) => {
     const query = `select blogs.id,blogs.title,blogs.body,date_format(blogs.created_at,'%M %d %Y') as 'date',
-                   concat(users.first_name,' ',users.last_name) as 'name', tags.tag as 'tags' from blogs
+                   concat(users.first_name,' ',users.last_name) as 'name', tags.tag as 'tags',blogs.image from blogs
                   join users on blogs.user_id = users.id join tags on tags.blog_id = blogs.id`;
     db.query(query, [], (error, results) => {
       if (error) {
@@ -30,7 +30,7 @@ function getBlogs() {
 function getBlogsByCategory(category) {
   return new Promise((resolve, reject) => {
     const query = `select blogs.id,blogs.title,blogs.body,date_format(blogs.created_at,'%M %d %Y') as 'date',
-                   concat(users.first_name,' ',users.last_name) as 'name', tags.tag as 'tags' from blogs
+                   concat(users.first_name,' ',users.last_name) as 'name', tags.tag as 'tags', blogs.image from blogs
                   join users on blogs.user_id = users.id join tags on tags.blog_id = blogs.id where tags.tag like '%${category}%'`;
     db.query(query, [], (error, results) => {
       if (error) {
@@ -45,7 +45,7 @@ function getBlogsByCategory(category) {
 function getBlog(id) {
   return new Promise((resolve, reject) => {
     const query = `select blogs.id,users.id as 'user_id', title,body,date_format(created_at,'%M %d %Y') as date ,concat(users.first_name,' ',users.last_name) as 'name',
-     tags.tag as 'tags' from blogs join users on blogs.user_id = users.id join tags on tags.blog_id = blogs.id where blogs.id=?`;
+     tags.tag as 'tags', blogs.image from blogs join users on blogs.user_id = users.id join tags on tags.blog_id = blogs.id where blogs.id=?`;
     db.query(query, [id], (error, results) => {
       if (error) {
         return reject(error);
@@ -56,10 +56,10 @@ function getBlog(id) {
   });
 }
 
-function insertBlog(title, body, id) {
+function insertBlog(title, body, id, image) {
   return new Promise((resolve, reject) => {
-    const query = `insert into blogs(title,body,user_id) values(?,?,?)`;
-    db.query(query, [title, body, id], (error, results) => {
+    const query = `insert into blogs(title,body,user_id,image) values(?,?,?,?)`;
+    db.query(query, [title, body, id, image], (error, results) => {
       if (error) {
         return reject(error);
       }
