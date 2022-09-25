@@ -17,7 +17,7 @@ function getBlogs() {
   return new Promise((resolve, reject) => {
     const query = `select blogs.id,blogs.title,blogs.body,date_format(blogs.created_at,'%M %d %Y') as 'date',
                    concat(users.first_name,' ',users.last_name) as 'name', tags.tag as 'tags',blogs.image from blogs
-                  join users on blogs.user_id = users.id join tags on tags.blog_id = blogs.id`;
+                  join users on blogs.user_id = users.id join tags on tags.blog_id = blogs.id   `;
     db.query(query, [], (error, results) => {
       if (error) {
         return reject(error);
@@ -44,7 +44,7 @@ function getBlogsByCategory(category) {
 //returns blog with given id
 function getBlog(id) {
   return new Promise((resolve, reject) => {
-    const query = `select blogs.id,users.id as 'user_id', title,body,date_format(created_at,'%M %d %Y') as date ,concat(users.first_name,' ',users.last_name) as 'name',
+    const query = `select blogs.id,users.id as 'user_id', title,body,date_format(created_at,'%M %d %Y') as 'date' ,concat(users.first_name,' ',users.last_name) as 'name',
      tags.tag as 'tags', blogs.image from blogs join users on blogs.user_id = users.id join tags on tags.blog_id = blogs.id where blogs.id=?`;
     db.query(query, [id], (error, results) => {
       if (error) {
@@ -72,6 +72,56 @@ function editBlog(title, body, id) {
   return new Promise((resolve, reject) => {
     const query = `update blogs set title=?,body=? where id=?`;
     db.query(query, [title, body, id], (error, results) => {
+      if (error) {
+        return reject(error);
+      }
+      return resolve(results);
+    });
+  });
+}
+
+function insertComment(comment, blog_id, user_id) {
+  return new Promise((resolve, reject) => {
+    const query = `insert into comments(body,blog_id,user_id) values(?,?,?)`;
+    db.query(query, [comment, blog_id, user_id], (error, results) => {
+      if (error) {
+        return reject(error);
+      }
+      return resolve(results);
+    });
+  });
+}
+
+function getComments() {
+  return new Promise((resolve, reject) => {
+    const query = `select * from comments`;
+    db.query(query, [], (error, results) => {
+      if (error) {
+        return reject(error);
+      }
+      return resolve(results);
+    });
+  });
+}
+
+//will return number of comments that are associated with given blog id
+function getNumberOfComments(id) {
+  return new Promise((resolve, reject) => {
+    const query = `select count(*) as 'numOfComments' from comments where blog_id=?`;
+    db.query(query, [id], (error, results) => {
+      if (error) {
+        return reject(error);
+      }
+      const { numOfComments } = results[0];
+      return resolve(numOfComments);
+    });
+  });
+}
+
+function getCommentsByBlogId(id) {
+  return new Promise((resolve, reject) => {
+    const query = `select comments.id,comments.body ,blog_id,concat(users.first_name,' ',users.last_name) as 'name',comments.user_id from comments join users on comments.user_id = users.id where comments.blog_id=?`;
+    db.query(query, [id], (error, results) => {
       if (error) {
         return reject(error);
       }
@@ -172,4 +222,8 @@ module.exports = {
   editBlog,
   deleteBlog,
   getBlogsByCategory,
+  getComments,
+  insertComment,
+  getCommentsByBlogId,
+  getNumberOfComments,
 };

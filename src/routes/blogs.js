@@ -31,6 +31,8 @@ const {
   deleteBlog,
   insertTag,
   getBlogsByCategory,
+  getCommentsByBlogId,
+  getNumberOfComments,
 } = require("../database/db");
 const { isAuthenticated } = require("../utils/helpers");
 
@@ -38,7 +40,14 @@ const { isAuthenticated } = require("../utils/helpers");
 router.get("/api/blogs", async (req, res) => {
   try {
     const blogs = await getBlogs();
-    return res.send(blogs);
+
+    const test = await Promise.all(
+      blogs.map(async (blog) => {
+        return { ...blog, numOfComments: await getNumberOfComments(blog.id) };
+      })
+    );
+
+    return res.send(test);
   } catch (e) {
     return res.send(e);
   }
@@ -50,6 +59,7 @@ router.get("/api/blogs/:id", async (req, res) => {
 
   try {
     const blog = await getBlog(id);
+
     if (!blog) {
       return res.send(false);
     }
@@ -62,12 +72,19 @@ router.get("/api/blogs/:id", async (req, res) => {
 router.get("/api/category-blogs/:category", async (req, res) => {
   const { category } = req.params;
   if (category === "All") {
-    const blogs = await getBlogs();
-    return res.send(blogs);
+    return res.redirect("/api/blogs");
   }
   try {
     const blogs = await getBlogsByCategory(category);
-    res.send(blogs);
+    const test = await Promise.all(
+      blogs.map(async (blog) => {
+        return {
+          ...blog,
+          numOfComments: await getNumberOfComments(blog.id),
+        };
+      })
+    );
+    res.send(test);
   } catch (e) {
     res.send(e);
   }
