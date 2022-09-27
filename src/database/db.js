@@ -79,6 +79,30 @@ function editBlog(title, body, id) {
     });
   });
 }
+function getComments() {
+  return new Promise((resolve, reject) => {
+    const query = `select * from comments`;
+    db.query(query, [], (error, results) => {
+      if (error) {
+        return reject(error);
+      }
+      return resolve(results);
+    });
+  });
+}
+
+//gets comment with given id
+function getComment(id) {
+  return new Promise((resolve, reject) => {
+    const query = `select * from comments where id=?`;
+    db.query(query, [id], (error, results) => {
+      if (error) {
+        return reject(error);
+      }
+      return resolve(results[0]);
+    });
+  });
+}
 
 function insertComment(comment, blog_id, user_id) {
   return new Promise((resolve, reject) => {
@@ -92,10 +116,23 @@ function insertComment(comment, blog_id, user_id) {
   });
 }
 
-function getComments() {
+function editComment(comment, id) {
   return new Promise((resolve, reject) => {
-    const query = `select * from comments`;
-    db.query(query, [], (error, results) => {
+    const query = `update comments set body=? where id=?`;
+    db.query(query, [comment, id], (error, results) => {
+      if (error) {
+        return reject(error);
+      }
+      return resolve(results);
+    });
+  });
+}
+
+//deletes comment from database with matching id
+function deleteComment(id) {
+  return new Promise((resolve, reject) => {
+    const query = `delete from comments where id=?`;
+    db.query(query, [id], (error, results) => {
       if (error) {
         return reject(error);
       }
@@ -133,8 +170,9 @@ function getCommentsByBlogId(id) {
 function deleteBlog(id) {
   return new Promise((resolve, reject) => {
     const query1 = `delete from tags where blog_id=${id}`;
-    const query2 = `delete from blogs where id=${id}`;
-    db.query(`${query1}; ${query2}`, [id], (error, results) => {
+    const query2 = `delete from comments where blog_id=${id}`;
+    const query3 = `delete from blogs where id=${id}`;
+    db.query(`${query1}; ${query2}; ${query3};`, [id], (error, results) => {
       if (error) {
         return reject(error);
       }
@@ -226,4 +264,7 @@ module.exports = {
   insertComment,
   getCommentsByBlogId,
   getNumberOfComments,
+  deleteComment,
+  getComment,
+  editComment,
 };

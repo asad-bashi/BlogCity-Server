@@ -31,7 +31,6 @@ const {
   deleteBlog,
   insertTag,
   getBlogsByCategory,
-  getCommentsByBlogId,
   getNumberOfComments,
 } = require("../database/db");
 const { isAuthenticated } = require("../utils/helpers");
@@ -125,6 +124,7 @@ router.put("/api/blogs/:id", isAuthenticated, async (req, res) => {
       return res.send(false);
     }
     await editBlog(title, body, id);
+    return res.send(true);
   } catch (e) {
     res.send(e);
   }
@@ -132,17 +132,20 @@ router.put("/api/blogs/:id", isAuthenticated, async (req, res) => {
 
 router.delete("/api/blogs/:id", isAuthenticated, async (req, res) => {
   const { id } = req.params;
+  const user_id = req.user.id;
   try {
     const blog = await getBlog(id);
-    const path = blog.image;
-    await deleteBlog(id);
-    fs.unlink(path, (err) => {
-      if (err) {
-        console.log(err);
-      }
-    });
-    console.log(blog);
-    res.send("blog was deleted");
+    if (user_id === blog.user_id) {
+      const path = blog.image;
+      await deleteBlog(id);
+      fs.unlink(path, (err) => {
+        if (err) {
+          console.log(err);
+        }
+      });
+      return res.send("blog was deleted");
+    }
+    return res.send({ message: "You're not authorized to reach this page" });
   } catch (e) {
     res.send(e);
   }
