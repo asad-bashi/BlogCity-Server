@@ -54,7 +54,6 @@ app.use(blogsRoute);
 app.use(usersRoute);
 app.use(commentRoute);
 
-
 app.get("/", (req, res) => {
   res.send(JSON.stringify("Go to a specific route to use this api "));
 });
@@ -63,11 +62,13 @@ app.get("/api/isAuth", (req, res) => {
   const isValid = req.isAuthenticated();
 
   if (isValid) {
-    return res.send(
+    res.writeHead(200, { "Content-Type": "application/json" });
+    return res.end(
       JSON.stringify({ isAuthenticated: isValid, id: req.user.id })
     );
   }
-  return res.send(JSON.stringify({ isAuthenticated: isValid, id: false }));
+  res.writeHead(200, { "Content-Type": "application/json" });
+  return res.end(JSON.stringify({ isAuthenticated: isValid, id: false }));
 });
 
 app.listen(5000, () => {
