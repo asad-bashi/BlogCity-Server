@@ -54,6 +54,7 @@ app.use(blogsRoute);
 app.use(usersRoute);
 app.use(commentRoute);
 
+
 app.get("/", (req, res) => {
   res.send(JSON.stringify("Go to a specific route to use this api "));
 });
