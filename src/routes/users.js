@@ -10,7 +10,7 @@ router.get("/api/users", async (req, res) => {
     const allUsers = await getAllUsers();
     res.send(JSON.stringify(allUsers));
   } catch (e) {
-    res.send(e);
+    res.send(JSON.stringify(e));
   }
 });
 
