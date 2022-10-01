@@ -15,9 +15,9 @@ router.get("/api/comments/:id", async (req, res) => {
   try {
     const comment = await getComment(id);
     if (comment) {
-      return res.send(comment);
+      return res.send(JSON.stringify(comment));
     }
-    return res.send({ message: "comment not found" });
+    return res.send(JSON.stringify({ message: "comment not found" }));
   } catch (e) {
     res.send(e);
   }
@@ -29,7 +29,7 @@ router.get("/api/commentsByBlogId/:id", async (req, res) => {
   console.log(id);
   try {
     const comments = await getCommentsByBlogId(id);
-    res.send(comments);
+    res.send(JSON.stringify(comments));
   } catch (e) {
     res.send(e);
   }
@@ -43,7 +43,7 @@ router.post("/api/comments", isAuthenticated, async (req, res) => {
   try {
     const test = await insertComment(comment, blog_id, user_id);
     console.log(test);
-    res.send({ message: "comment added" });
+    res.send(JSON.stringify({ message: "comment added" }));
   } catch (e) {
     res.send(e);
   }
@@ -56,10 +56,10 @@ router.put("/api/comments/:id", isAuthenticated, async (req, res) => {
   try {
     const comment = await getComment(id);
     if (!comment) {
-      return res.send(false);
+      return res.send(JSON.stringify(false));
     }
     await editComment(body, id);
-    return res.send(true);
+    return res.send(JSON.stringify(true));
   } catch (e) {
     res.send(e);
   }
@@ -74,9 +74,11 @@ router.delete("/api/comments/:id", isAuthenticated, async (req, res) => {
     const comment = await getComment(id);
     if (user_id === comment.user_id) {
       await deleteComment(id);
-      return res.send({ message: "comment deleted" });
+      return res.send(JSON.stringify({ message: "comment deleted" }));
     }
-    return res.send({ message: "You're not authorized to reach this page" });
+    return res.send(
+      JSON.stringify({ message: "You're not authorized to reach this page" })
+    );
   } catch (e) {
     res.send(e);
   }

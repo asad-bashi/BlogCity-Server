@@ -23,7 +23,6 @@ const blogsRoute = require("./routes/blogs");
 const usersRoute = require("./routes/users");
 const commentRoute = require("./routes/comments");
 
-
 //MiddleWare
 app.use(
   session({
@@ -55,13 +54,19 @@ app.use(blogsRoute);
 app.use(usersRoute);
 app.use(commentRoute);
 
+app.get("/", (req, res) => {
+  res.send(JSON.stringify("Go to a specific route to use this api "));
+});
+
 app.get("/api/isAuth", (req, res) => {
   const isValid = req.isAuthenticated();
 
   if (isValid) {
-    return res.send({ isAuthenticated: isValid, id: req.user.id });
+    return res.send(
+      JSON.stringify({ isAuthenticated: isValid, id: req.user.id })
+    );
   }
-  return res.send({ isAuthenticated: isValid, id: false });
+  return res.send(JSON.stringify({ isAuthenticated: isValid, id: false }));
 });
 
 app.listen(5000, () => {

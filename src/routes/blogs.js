@@ -1,4 +1,4 @@
-const { Router } = require("express");
+const { Router, json } = require("express");
 const multer = require("multer");
 const router = Router();
 const fs = require("fs");
@@ -47,7 +47,7 @@ router.get("/api/blogs", async (req, res) => {
       })
     );
 
-    return res.send(test);
+    return res.send(JSON.stringify(test));
   } catch (e) {
     return res.send(e);
   }
@@ -61,9 +61,9 @@ router.get("/api/blogs/:id", async (req, res) => {
     const blog = await getBlog(id);
 
     if (!blog) {
-      return res.send(false);
+      return res.send(JSON.stringify(false));
     }
-    return res.send(blog);
+    return res.send(JSON.stringify(blog));
   } catch (e) {
     return res.send(e);
   }
@@ -84,7 +84,7 @@ router.get("/api/category-blogs/:category", async (req, res) => {
         };
       })
     );
-    res.send(blogsWithComments);
+    res.send(JSON.stringify(blogsWithComments));
   } catch (e) {
     res.send(e);
   }
@@ -103,7 +103,7 @@ router.get("/api/blogs-by-userid/:user_id", async (req, res) => {
         };
       })
     );
-    res.send(blogsWithComments);
+    res.send(JSON.stringify(blogsWithComments));
   } catch (e) {
     res.send(e);
   }
@@ -117,7 +117,7 @@ router.post(
   async (req, res) => {
     const { title, body, selectedTags } = req.body;
     if (!req.file) {
-      return res.send({ message: "Invalid Image Type" });
+      return res.send(JSON.stringify({ message: "Invalid Image Type" }));
     }
 
     const image = req.file.path;
@@ -126,7 +126,7 @@ router.post(
     try {
       const { insertId } = await insertBlog(title, body, id, image);
       await insertTag(selectedTags, insertId);
-      return res.send({ message: "blog added", id: insertId });
+      return res.send(JSON.stringify({ message: "blog added", id: insertId }));
     } catch (e) {
       return res.send(e);
     }
@@ -141,10 +141,10 @@ router.put("/api/blogs/:id", isAuthenticated, async (req, res) => {
   try {
     const blog = await getBlog(id);
     if (!blog) {
-      return res.send(false);
+      return res.send(JSON.stringify(false));
     }
     await editBlog(title, body, id);
-    return res.send(true);
+    return res.send(JSON.stringify(true));
   } catch (e) {
     res.send(e);
   }
@@ -163,9 +163,11 @@ router.delete("/api/blogs/:id", isAuthenticated, async (req, res) => {
           console.log(err);
         }
       });
-      return res.send("blog was deleted");
+      return res.send(JSON.stringify("blog was deleted"));
     }
-    return res.send({ message: "You're not authorized to reach this page" });
+    return res.send(
+      JSON.stringify({ message: "You're not authorized to reach this page" })
+    );
   } catch (e) {
     res.send(e);
   }

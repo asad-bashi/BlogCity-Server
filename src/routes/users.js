@@ -8,7 +8,7 @@ const { isAuthenticated } = require("../utils/helpers");
 router.get("/api/users", async (req, res) => {
   try {
     const allUsers = await getAllUsers();
-    res.send(allUsers);
+    res.send(JSON.stringify(allUsers));
   } catch (e) {
     res.send(e);
   }
@@ -19,9 +19,11 @@ router.post("/api/users", async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
   try {
     await insertUser(firstName, lastName, email, password);
-    res.send({ message: "account created", isValid: true });
+    res.send(JSON.stringify({ message: "account created", isValid: true }));
   } catch (e) {
-    res.send({ message: "email already exist", isValid: false });
+    res.send(
+      JSON.stringify({ message: "email already exist", isValid: false })
+    );
   }
 });
 
@@ -36,11 +38,11 @@ router.post(
 
 router.get("/api/login-failed", (req, res, next) => {
   const message = req.session.messages[req.session.messages.length - 1];
-  res.send({ message });
+  res.send(JSON.stringify({ message }));
 });
 
 router.get("/api/login-success", (req, res) => {
-  res.send({ message: "login successful" });
+  res.send(JSON.stringify({ message: "login successful" }));
 });
 
 //logout the user
@@ -49,7 +51,7 @@ router.post("/api/logout", isAuthenticated, (req, res) => {
     if (e) {
       res.send(e);
     } else {
-      res.send({ message: "logout successful" });
+      res.send(JSON.stringify({ message: "logout successful" }));
     }
   });
 });
@@ -59,9 +61,11 @@ router.get("/api/users/:id", async (req, res) => {
   const { id } = req.params;
   const user = await getUser(id);
   if (!user) {
-    return res.send({ message: "User doesn't exist", isValid: false });
+    return res.send(
+      JSON.stringify({ message: "User doesn't exist", isValid: false })
+    );
   }
-  return res.send(user);
+  return res.send(JSON.stringify(user));
 });
 
 module.exports = router;
