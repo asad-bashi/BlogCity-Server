@@ -50,9 +50,9 @@ app.use("/Images", express.static("Images"));
 app.use(cors(corsConfig));
 app.use(express.json());
 app.use(express.urlencoded({ limit: "30mb", extended: true }));
-app.use(blogsRoute);
-app.use(usersRoute);
-app.use(commentRoute);
+app.use("/blogs", blogsRoute);
+app.use("/users", usersRoute);
+app.use("/comments", commentRoute);
 
 app.get("/", (req, res) => {
   res.send(JSON.stringify("Go to a specific route to use this api "));
