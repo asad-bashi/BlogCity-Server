@@ -17,7 +17,7 @@ function getBlogs() {
   return new Promise((resolve, reject) => {
     const query = `select blogs.id,blogs.title,blogs.body,date_format(blogs.created_at,'%M %d %Y') as 'date',
                    concat(users.first_name,' ',users.last_name) as 'name', tags.tag as 'tags',blogs.image from blogs
-                  join users on blogs.user_id = users.id join tags on tags.blog_id = blogs.id   `;
+                  join users on blogs.user_id = users.id join tags on tags.blog_id = blogs.id`;
     db.query(query, [], (error, results) => {
       if (error) {
         return reject(error);
@@ -33,6 +33,22 @@ function getBlogsByCategory(category) {
                    concat(users.first_name,' ',users.last_name) as 'name', tags.tag as 'tags', blogs.image from blogs
                   join users on blogs.user_id = users.id join tags on tags.blog_id = blogs.id where tags.tag like '%${category}%'`;
     db.query(query, [], (error, results) => {
+      if (error) {
+        return reject(error);
+      }
+      return resolve(results);
+    });
+  });
+}
+
+//returns all blogs with associated user id
+function getBlogsByUserId(user_id) {
+  return new Promise((resolve, reject) => {
+    const query = `select blogs.id,blogs.title,blogs.body,date_format(blogs.created_at,'%M %d %Y') as 'date',
+                   concat(users.first_name,' ',users.last_name) as 'name', tags.tag as 'tags', blogs.image from blogs
+                  join users on blogs.user_id = users.id join tags on tags.blog_id = blogs.id where blogs.user_id=?`;
+
+    db.query(query, [user_id], (error, results) => {
       if (error) {
         return reject(error);
       }
@@ -251,6 +267,7 @@ module.exports = {
   db,
   getBlog,
   getBlogs,
+  getBlogsByUserId,
   insertBlog,
   isValidEmail,
   getUser,

@@ -26,6 +26,7 @@ const upload = multer({ storage, fileFilter });
 const {
   getBlog,
   getBlogs,
+  getBlogsByUserId,
   insertBlog,
   editBlog,
   deleteBlog,
@@ -75,7 +76,7 @@ router.get("/api/category-blogs/:category", async (req, res) => {
   }
   try {
     const blogs = await getBlogsByCategory(category);
-    const test = await Promise.all(
+    const blogsWithComments = await Promise.all(
       blogs.map(async (blog) => {
         return {
           ...blog,
@@ -83,7 +84,26 @@ router.get("/api/category-blogs/:category", async (req, res) => {
         };
       })
     );
-    res.send(test);
+    res.send(blogsWithComments);
+  } catch (e) {
+    res.send(e);
+  }
+});
+
+router.get("/api/blogs-by-userid/:user_id", async (req, res) => {
+  const { user_id } = req.params;
+
+  try {
+    const blogs = await getBlogsByUserId(user_id);
+    const blogsWithComments = await Promise.all(
+      blogs.map(async (blog) => {
+        return {
+          ...blog,
+          numOfComments: await getNumberOfComments(blog.id),
+        };
+      })
+    );
+    res.send(blogsWithComments);
   } catch (e) {
     res.send(e);
   }

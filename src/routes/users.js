@@ -19,9 +19,9 @@ router.post("/api/users", async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
   try {
     await insertUser(firstName, lastName, email, password);
-    res.send("account created");
+    res.send({ message: "account created", isValid: true });
   } catch (e) {
-    res.send("email already exist");
+    res.send({ message: "email already exist", isValid: false });
   }
 });
 
@@ -59,7 +59,7 @@ router.get("/api/users/:id", async (req, res) => {
   const { id } = req.params;
   const user = await getUser(id);
   if (!user) {
-    return res.send("User doesn't exist");
+    return res.send({ message: "User doesn't exist", isValid: false });
   }
   return res.send(user);
 });
