@@ -71,6 +71,8 @@ app.get("/api/isAuth", (req, res) => {
   return res.end(JSON.stringify({ isAuthenticated: isValid, id: false }));
 });
 
-app.listen(443, () => {
-  console.log("execute on port 5000");
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`execute on port 5000${PORT}`);
 });
