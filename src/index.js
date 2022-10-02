@@ -38,18 +38,18 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(shouldSendSameSiteNone);
 
-// const corsConfig = {
-//   origin: true,
-//   credentials: true,
-// };
+const corsConfig = {
+  origin: true,
+  credentials: true,
+};
 
 app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Origin", req.get("Origin") || "*");
   next();
 });
 app.use(express.static(__dirname));
 app.use("/Images", express.static("Images"));
-app.use(cors());
+app.use(cors(corsConfig));
 app.use(express.json());
 app.use(express.urlencoded({ limit: "30mb", extended: true }));
 app.use(blogsRoute);
@@ -62,6 +62,7 @@ app.get("/", (req, res) => {
 
 app.get("/api/isAuth", (req, res) => {
   const isValid = req.isAuthenticated();
+  console.log(req);
 
   if (isValid) {
     res.writeHead(200, { "Content-Type": "application/json" });
@@ -76,5 +77,5 @@ app.get("/api/isAuth", (req, res) => {
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`execute on port 5000${PORT}`);
+  console.log(`execute on port ${PORT}`);
 });
