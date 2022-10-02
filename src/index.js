@@ -38,18 +38,18 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(shouldSendSameSiteNone);
 
-const corsConfig = {
-  origin: true,
-  credentials: true,
-};
+// const corsConfig = {
+//   origin: true,
+//   credentials: true,
+// };
 
 app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", req.get("Origin") || "*");
+  res.header("Access-Control-Allow-Origin", "*");
   next();
 });
 app.use(express.static(__dirname));
 app.use("/Images", express.static("Images"));
-app.use(cors(corsConfig));
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ limit: "30mb", extended: true }));
 app.use(blogsRoute);
