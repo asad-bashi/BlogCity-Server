@@ -55,7 +55,7 @@ app.use("/users", usersRoute);
 app.use("/comments", commentRoute);
 
 app.get("/", (req, res) => {
-  res.send(JSON.stringify("Go to a specific route to use this api "));
+  res.send(JSON.stringify("Go to a specific route to use this api"));
 });
 
 app.get("/api/isAuth", (req, res) => {
@@ -71,6 +71,6 @@ app.get("/api/isAuth", (req, res) => {
   return res.end(JSON.stringify({ isAuthenticated: isValid, id: false }));
 });
 
-app.listen(5000, () => {
+app.listen(443, () => {
   console.log("execute on port 5000");
 });
