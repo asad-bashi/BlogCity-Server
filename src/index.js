@@ -30,7 +30,7 @@ app.use(
     resave: false,
     saveUninitialized: true,
     store: sessionStore,
-    cookie: { maxAge: TWO_HOURS, httpOnly: true, sameSite: true },
+    cookie: { maxAge: TWO_HOURS, httpOnly: true, sameSite: "strict" },
   })
 );
 app.use(passport.initialize());
