@@ -21,7 +21,6 @@
     "mysql": "^2.18.1",
     "nodemon": "^2.0.19",
     "passport": "^0.6.0",
-    "passport-local": "^1.0.0",
-    "should-send-same-site-none": "^2.0.5"
+    "passport-local": "^1.0.0"
   }
 }

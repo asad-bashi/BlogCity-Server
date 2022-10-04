@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
-const { shouldSendSameSiteNone } = require("should-send-same-site-none");
 const passport = require("passport");
 const session = require("express-session");
 const mysqlStore = require("express-mysql-session")(session);
@@ -41,27 +40,13 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(shouldSendSameSiteNone);
 
 const corsConfig = {
-  origin: "https://blogcity-api.onrender.com",
+  origin: ["http://localhost:3000"],
   credentials: true,
+  allowedHeaders: "X-Requested-With, Content-Type, Accept",
 };
 
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Credentials", true);
-  res.header(
-    "Access-Control-Allow-Origin",
-    req.get("https://blogcity-api.onrender.com")
-  );
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-
-  // res.header("Access-Control-Allow-Origin", "blogcity-api.onrender.com");
-  next();
-});
 app.use(express.static(__dirname));
 app.use("/Images", express.static("Images"));
 app.use(cors(corsConfig));
