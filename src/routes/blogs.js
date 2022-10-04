@@ -2,6 +2,7 @@ const { Router, json } = require("express");
 const multer = require("multer");
 const router = Router();
 const fs = require("fs");
+const cors = require("cors");
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "./Images/");
@@ -21,6 +22,14 @@ const fileFilter = function (req, file, cb) {
     cb(null, false);
   }
 };
+
+const corsConfig = {
+  origin: ["http://localhost:3000"],
+  credentials: true,
+  allowedHeaders: "X-Requested-With, Content-Type, Accept",
+};
+
+router.use(cors(corsConfig));
 
 const upload = multer({ storage, fileFilter });
 const {
