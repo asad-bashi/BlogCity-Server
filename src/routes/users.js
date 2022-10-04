@@ -6,7 +6,7 @@ const passport = require("passport");
 const { isAuthenticated } = require("../utils/helpers");
 
 const corsConfig = {
-  origin: ["http://localhost:3000"],
+  origin: ["http://localhost:3000", "https://blogcity.netlify.app"],
   credentials: true,
   allowedHeaders: "X-Requested-With, Content-Type, Accept",
 };
