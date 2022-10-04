@@ -31,7 +31,12 @@ app.use(
     resave: false,
     saveUninitialized: true,
     store: sessionStore,
-    cookie: { maxAge: TWO_HOURS, httpOnly: true, sameSite: "none" },
+    cookie: {
+      maxAge: TWO_HOURS,
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+    },
   })
 );
 app.use(passport.initialize());
@@ -44,13 +49,17 @@ const corsConfig = {
 };
 
 app.use(function (req, res, next) {
-  // res.header("Access-Control-Allow-Origin", req.get("Origin") || "*");
-  res.header("Access-Control-Allow-Origin", "blogcity-api.onrender.com");
   res.header("Access-Control-Allow-Credentials", true);
   res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
+    "Access-Control-Allow-Origin",
+    req.get("https://blogcity-api.onrender.com")
   );
+  res.header(
+    "Access-Control-Allow-Headers",
+    "https://blogcity-api.onrender.com, X-Requested-With, Content-Type, Accept"
+  );
+
+  // res.header("Access-Control-Allow-Origin", "blogcity-api.onrender.com");
   next();
 });
 app.use(express.static(__dirname));
