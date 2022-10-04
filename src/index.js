@@ -44,7 +44,7 @@ app.use(passport.session());
 app.use(shouldSendSameSiteNone);
 
 const corsConfig = {
-  origin: true,
+  origin: "https://blogcity-api.onrender.com",
   credentials: true,
 };
 
@@ -56,7 +56,7 @@ app.use(function (req, res, next) {
   );
   res.header(
     "Access-Control-Allow-Headers",
-    "https://blogcity-api.onrender.com, X-Requested-With, Content-Type, Accept"
+    "Origin, X-Requested-With, Content-Type, Accept"
   );
 
   // res.header("Access-Control-Allow-Origin", "blogcity-api.onrender.com");
