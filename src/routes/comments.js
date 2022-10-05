@@ -1,5 +1,4 @@
 const { Router } = require("express");
-const cors = require("cors");
 const router = Router();
 const {
   getCommentsByBlogId,
@@ -10,13 +9,14 @@ const {
 } = require("../database/db");
 const { isAuthenticated } = require("../utils/helpers");
 
-const corsConfig = {
-  origin: ["http://localhost:3000", "https://blogcity.netlify.app"],
-  credentials: true,
-  allowedHeaders: "X-Requested-With, Content-Type, Accept",
-};
+// const cors = require("cors");
+// const corsConfig = {
+//   origin: ["http://localhost:3000", "https://blogcity.netlify.app"],
+//   credentials: true,
+//   allowedHeaders: "X-Requested-With, Content-Type, Accept",
+// };
 
-router.use(cors(corsConfig));
+// router.use(cors(corsConfig));
 
 router.get("/api/comments/:id", async (req, res) => {
   const { id } = req.params;

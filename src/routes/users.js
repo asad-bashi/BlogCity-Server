@@ -1,17 +1,17 @@
 const { Router } = require("express");
 const { getUser, getAllUsers, insertUser } = require("../database/db");
 const router = Router();
-const cors = require("cors");
 const passport = require("passport");
 const { isAuthenticated } = require("../utils/helpers");
 
-const corsConfig = {
-  origin: ["http://localhost:3000", "https://blogcity.netlify.app"],
-  credentials: true,
-  allowedHeaders: "X-Requested-With, Content-Type, Accept",
-};
+// const cors = require("cors");
+// const corsConfig = {
+//   origin: ["http://localhost:3000", "https://blogcity.netlify.app"],
+//   credentials: true,
+//   allowedHeaders: "X-Requested-With, Content-Type, Accept",
+// };
 
-router.use(cors(corsConfig));
+// router.use(cors(corsConfig));
 
 //gets list of users
 router.get("/api/users", async (req, res) => {
