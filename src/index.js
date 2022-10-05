@@ -63,15 +63,11 @@ app.get("/", (req, res) => {
 
 app.get("/api/isAuth", (req, res) => {
   const isValid = req.isAuthenticated();
-  console.log(req);
-
   if (isValid) {
-    res.writeHead(200, { "Content-Type": "application/json" });
     return res.end(
       JSON.stringify({ isAuthenticated: isValid, id: req.user.id })
     );
   }
-  res.writeHead(200, { "Content-Type": "application/json" });
   return res.end(JSON.stringify({ isAuthenticated: isValid, id: false }));
 });
 

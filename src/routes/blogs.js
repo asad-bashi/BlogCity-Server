@@ -1,4 +1,4 @@
-const { Router, json } = require("express");
+const { Router } = require("express");
 const multer = require("multer");
 const router = Router();
 const fs = require("fs");
@@ -6,7 +6,7 @@ const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "./Images/");
   },
-  
+
   filename: function (req, file, cb) {
     // Windows OS doesn't accept files with a ":"
     cb(null, new Date().toISOString().replace(/:/g, "-") + file.originalname);
@@ -22,13 +22,6 @@ const fileFilter = function (req, file, cb) {
   }
 };
 
-// const cors = require("cors");
-// const corsConfig = {
-//   origin: ["http://localhost:3000", "https://blogcity.netlify.app"],
-//   credentials: true,
-//   allowedHeaders: "X-Requested-With, Content-Type, Accept",
-// };
-// router.use(cors(corsConfig));
 
 const upload = multer({ storage, fileFilter });
 const {
