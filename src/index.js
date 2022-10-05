@@ -8,6 +8,7 @@ const dotenv = require("dotenv");
 require("./utils/local");
 dotenv.config();
 const TWO_HOURS = 1000 * 60 * 60 * 2;
+app.set("trust proxy", 1);
 const options = {
   host: process.env.DATABASE_HOST,
   port: process.env.DATABASE_PORT,
@@ -30,6 +31,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     store: sessionStore,
+    proxy: true,
     cookie: {
       maxAge: TWO_HOURS,
       httpOnly: true,
@@ -48,6 +50,10 @@ const corsConfig = {
   methods: ["GET", "POST", "PUT", "DELETE"],
 };
 
+// app.use((req, res, next) => {
+//   console.log(req.protocol);
+//   next();
+// });
 app.use(express.static(__dirname));
 app.use("/Images", express.static("Images"));
 app.use(cors(corsConfig));
