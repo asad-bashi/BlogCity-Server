@@ -44,7 +44,7 @@ app.use(passport.session());
 const corsConfig = {
   origin: ["http://localhost:3000", "https://blogcity.netlify.app"],
   credentials: true,
-  allowedHeaders: "Accept",
+  allowedHeaders: "X-Requested-With, Content-Type, Accept",
   methods: ["GET", "POST", "PUT", "DELETE"],
 };
 
