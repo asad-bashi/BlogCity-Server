@@ -4,7 +4,6 @@ const router = Router();
 const passport = require("passport");
 const { isAuthenticated } = require("../utils/helpers");
 
-
 //gets list of users
 router.get("/api/users", async (req, res) => {
   try {
@@ -28,18 +27,24 @@ router.post("/api/users", async (req, res) => {
   }
 });
 
-router.post(
-  "/api/login",
+// router.post(
+//   "/api/login",
+//   passport.authenticate("local", {
+//     failureRedirect: "/api/login-failed",
+//     successRedirect: "/api/login-success",
+//   })
+// );
+
+router.post("/api/login", (req, res, next) => {
   passport.authenticate("local", {
-    failureRedirect: "/api/login-failed",
     successRedirect: "/api/login-success",
-    failureMessage: true,
-  })
-);
+    failureRedirect: "/api/login-failed",
+    failureFlash: true,
+  })(req, res, next);
+});
 
 router.get("/api/login-failed", (req, res, next) => {
-  const message = req.session.messages[req.session.messages.length - 1];
-  res.send(JSON.stringify({ message }));
+  res.send(JSON.stringify({ message: "login unsuccessful" }));
 });
 
 router.get("/api/login-success", (req, res) => {
