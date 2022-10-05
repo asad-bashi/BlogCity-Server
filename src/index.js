@@ -50,10 +50,6 @@ const corsConfig = {
   methods: ["GET", "POST", "PUT", "DELETE"],
 };
 
-// app.use((req, res, next) => {
-//   console.log(req.protocol);
-//   next();
-// });
 app.use(express.static(__dirname));
 app.use("/Images", express.static("Images"));
 app.use(cors(corsConfig));
