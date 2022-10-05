@@ -28,7 +28,7 @@ app.use(
   session({
     secret: "LASDNFOLIUASNDFKSABDFBASDFASDF",
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     store: sessionStore,
     cookie: {
       maxAge: TWO_HOURS,
