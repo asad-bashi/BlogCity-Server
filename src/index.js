@@ -50,8 +50,7 @@ const corsConfig = {
   methods: ["GET", "POST", "PUT", "DELETE"],
 };
 
-app.use(express.static(__dirname));
-app.use("/Images", express.static("Images"));
+app.use("/Images", express.static(__dirname + "Images"));
 app.use(cors(corsConfig));
 app.use(express.json());
 app.use(express.urlencoded({ limit: "30mb", extended: true }));
