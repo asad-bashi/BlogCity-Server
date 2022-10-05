@@ -27,22 +27,13 @@ router.post("/api/users", async (req, res) => {
   }
 });
 
-// router.post(
-//   "/api/login",
-//   passport.authenticate("local", {
-//     failureRedirect: "/api/login-failed",
-//     successRedirect: "/api/login-success",
-//   })
-// );
-
-router.post("/api/login", (req, res, next) => {
+router.post(
+  "/api/login",
   passport.authenticate("local", {
-    successRedirect: "/api/login-success",
     failureRedirect: "/api/login-failed",
-    failureFlash: true,
-  })(req, res, next);
-});
-
+    successRedirect: "/api/login-success",
+  })
+);
 router.get("/api/login-failed", (req, res, next) => {
   res.send(JSON.stringify({ message: "login unsuccessful" }));
 });
