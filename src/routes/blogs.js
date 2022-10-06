@@ -1,28 +1,41 @@
 const { Router } = require("express");
 const multer = require("multer");
+const cloudinary = require("cloudinary").v2;
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const router = Router();
 const fs = require("fs");
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, __dirname + "./Images/");
-  },
-
-  filename: function (req, file, cb) {
-    // Windows OS doesn't accept files with a ":"
-    cb(null, new Date().toISOString().replace(/:/g, "-") + file.originalname);
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "BLOGCITY",
   },
 });
+const upload = multer({ storage });
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, __dirname + "./Images/");
+//   },
 
-const fileFilter = function (req, file, cb) {
-  // Only accepts images of type jpeg and png
-  if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
-    cb(null, true);
-  } else {
-    cb(null, false);
-  }
-};
+//   filename: function (req, file, cb) {
+//     // Windows OS doesn't accept files with a ":"
+//     cb(null, new Date().toISOString().replace(/:/g, "-") + file.originalname);
+//   },
+// });
 
-const upload = multer({ storage, fileFilter });
+// const fileFilter = function (req, file, cb) {
+//   // Only accepts images of type jpeg and png
+//   if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+//     cb(null, true);
+//   } else {
+//     cb(null, false);
+//   }
+// };
+
 const {
   getBlog,
   getBlogs,
