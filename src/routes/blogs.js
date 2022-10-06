@@ -16,26 +16,6 @@ const storage = new CloudinaryStorage({
   },
 });
 const upload = multer({ storage });
-// const storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, __dirname + "./Images/");
-//   },
-
-//   filename: function (req, file, cb) {
-//     // Windows OS doesn't accept files with a ":"
-//     cb(null, new Date().toISOString().replace(/:/g, "-") + file.originalname);
-//   },
-// });
-
-// const fileFilter = function (req, file, cb) {
-//   // Only accepts images of type jpeg and png
-//   if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
-//     cb(null, true);
-//   } else {
-//     cb(null, false);
-//   }
-// };
-
 const {
   getBlog,
   getBlogs,
