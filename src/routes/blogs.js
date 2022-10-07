@@ -151,11 +151,23 @@ router.delete("/api/blogs/:id", isAuthenticated, async (req, res) => {
     if (user_id === blog.user_id) {
       const path = blog.image;
       await deleteBlog(id);
-      fs.unlink(path, (err) => {
-        if (err) {
-          console.log(err);
+
+      //delete image from cloudinary
+      console.log(path);
+      const cloudinaryImageName = path.split("/").pop().split(".")[0];
+      console.log(cloudinaryImageName);
+
+      cloudinary.uploader.destroy(
+        `BLOGCITY/${cloudinaryImageName}`,
+        (error, result) => {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log(result);
+          }
         }
-      });
+      );
+
       return res.send(JSON.stringify("blog was deleted"));
     }
     return res.send(
